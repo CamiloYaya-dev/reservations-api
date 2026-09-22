@@ -1,0 +1,7 @@
+.git
+.env
+vendor
+.phpunit.cache
+reports
+*.rar
+*.zip

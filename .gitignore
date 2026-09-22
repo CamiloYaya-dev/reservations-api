@@ -1,0 +1,8 @@
+/.env
+/vendor/
+/.phpunit.cache/
+/reports/*.xml
+/reports/windows-*.txt
+/reports/runtime-versions.txt
+*.log
+/request.json

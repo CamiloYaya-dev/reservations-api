@@ -1,0 +1,243 @@
+ Image inventory-reservations-test-app Building 
+#1 [internal] load local bake definitions
+#1 reading from stdin 638B 0.0s done
+#1 DONE 0.0s
+
+#2 [internal] load build definition from Dockerfile
+#2 transferring dockerfile: 1.10kB 0.0s done
+#2 DONE 0.0s
+
+#3 [internal] load metadata for docker.io/library/composer:2
+#3 ...
+
+#4 [auth] library/composer:pull token for registry-1.docker.io
+#4 DONE 0.0s
+
+#5 [auth] library/php:pull token for registry-1.docker.io
+#5 DONE 0.0s
+
+#6 [internal] load metadata for docker.io/library/php:8.3-apache-bookworm
+#6 DONE 1.0s
+
+#3 [internal] load metadata for docker.io/library/composer:2
+#3 DONE 1.0s
+
+#7 [internal] load .dockerignore
+#7 transferring context: 92B done
+#7 DONE 0.0s
+
+#8 [composer 1/1] FROM docker.io/library/composer:2@sha256:a5f59b9fd2faf31218632be4809dc6491761085e8064c31dc3b84378c48c248b
+#8 resolve docker.io/library/composer:2@sha256:a5f59b9fd2faf31218632be4809dc6491761085e8064c31dc3b84378c48c248b 0.0s done
+#8 DONE 0.0s
+
+#9 [base 1/6] FROM docker.io/library/php:8.3-apache-bookworm@sha256:d9be5f5c49e07c71b1e906cf01a0bb7216dce466d1880d170467b9ca107071dd
+#9 resolve docker.io/library/php:8.3-apache-bookworm@sha256:d9be5f5c49e07c71b1e906cf01a0bb7216dce466d1880d170467b9ca107071dd 0.0s done
+#9 DONE 0.1s
+
+#10 [internal] load build context
+#10 transferring context: 699B done
+#10 DONE 0.0s
+
+#11 [base 3/6] COPY --from=composer /usr/bin/composer /usr/local/bin/composer
+#11 CACHED
+
+#12 [app 3/6] COPY src ./src
+#12 CACHED
+
+#13 [base 6/6] WORKDIR /var/www/html
+#13 CACHED
+
+#14 [app 4/6] COPY public ./public
+#14 CACHED
+
+#15 [app 5/6] COPY bin ./bin
+#15 CACHED
+
+#16 [base 4/6] COPY docker/apache.conf /etc/apache2/sites-available/000-default.conf
+#16 CACHED
+
+#17 [base 5/6] COPY docker/php.ini /usr/local/etc/php/conf.d/application.ini
+#17 CACHED
+
+#18 [app 1/6] COPY composer.json composer.lock ./
+#18 CACHED
+
+#19 [app 2/6] RUN composer install --no-dev --no-interaction --prefer-dist --no-progress --no-scripts
+#19 CACHED
+
+#20 [base 2/6] RUN apt-get update && apt-get install -y --no-install-recommends libonig-dev libxml2-dev unzip     && for ext in pdo_mysql mbstring dom xml xmlwriter; do          php -r "exit(extension_loaded('$ext') ? 0 : 1);" || docker-php-ext-install -j2 "$ext";        done     && rm -rf /var/lib/apt/lists/*
+#20 CACHED
+
+#21 [app 6/6] RUN composer dump-autoload --no-dev --classmap-authoritative --no-scripts
+#21 CACHED
+
+#22 exporting to image
+#22 exporting layers 0.0s done
+#22 exporting manifest sha256:97d186401896690be2fea1376b93cd94393e115bbe5771b061b14fa7f45235ce done
+#22 exporting config sha256:e86ffa7ad7e098a4fa36af0eb2657e67cfccbdfb1df0cbcbe8d245569f1663a9 done
+#22 exporting attestation manifest sha256:11e0a0a265fe87a91f6cf3e7a214da854e7d35bd194abb629af01d13e3adb526 0.0s done
+#22 exporting manifest list sha256:66230f226663fefc68187f885df6f1ef9bcc98d42b36e4f3ccdaf72558597a6d
+#22 exporting manifest list sha256:66230f226663fefc68187f885df6f1ef9bcc98d42b36e4f3ccdaf72558597a6d 0.0s done
+#22 naming to docker.io/library/inventory-reservations-test-app:latest done
+#22 unpacking to docker.io/library/inventory-reservations-test-app:latest 0.0s done
+#22 DONE 0.2s
+
+#23 resolving provenance for metadata file
+#23 DONE 0.0s
+ Image inventory-reservations-test-app Built 
+ Container inventory-reservations-test-db-1 Starting 
+ Container inventory-reservations-test-db-1 Started 
+ Container inventory-reservations-test-db-1 Waiting 
+ Container inventory-reservations-test-db-1 Healthy 
+ Container inventory-reservations-test-app-1 Starting 
+ Container inventory-reservations-test-app-1 Started 
+ Container inventory-reservations-test-db-1 Waiting 
+ Container inventory-reservations-test-app-1 Waiting 
+ Container inventory-reservations-test-db-1 Healthy 
+ Container inventory-reservations-test-app-1 Healthy 
+ Image inventory-reservations-tests Building 
+#1 [internal] load local bake definitions
+#1 reading from stdin 1.16kB 0.0s done
+#1 DONE 0.0s
+
+#2 [internal] load build definition from Dockerfile
+#2 transferring dockerfile: 1.10kB done
+#2 DONE 0.0s
+
+#3 [internal] load metadata for docker.io/library/php:8.3-apache-bookworm
+#3 DONE 0.2s
+
+#4 [internal] load metadata for docker.io/library/composer:2
+#4 DONE 0.3s
+
+#5 [internal] load .dockerignore
+#5 transferring context: 92B done
+#5 DONE 0.0s
+
+#6 [internal] load build context
+#6 DONE 0.0s
+
+#7 [composer 1/1] FROM docker.io/library/composer:2@sha256:a5f59b9fd2faf31218632be4809dc6491761085e8064c31dc3b84378c48c248b
+#7 resolve docker.io/library/composer:2@sha256:a5f59b9fd2faf31218632be4809dc6491761085e8064c31dc3b84378c48c248b 0.0s done
+#7 DONE 0.1s
+
+#8 [base 1/6] FROM docker.io/library/php:8.3-apache-bookworm@sha256:d9be5f5c49e07c71b1e906cf01a0bb7216dce466d1880d170467b9ca107071dd
+#8 resolve docker.io/library/php:8.3-apache-bookworm@sha256:d9be5f5c49e07c71b1e906cf01a0bb7216dce466d1880d170467b9ca107071dd 0.0s done
+#8 DONE 0.1s
+
+#6 [internal] load build context
+#6 transferring context: 96.18kB 0.0s done
+#6 DONE 0.0s
+
+#9 [base 5/6] COPY docker/php.ini /usr/local/etc/php/conf.d/application.ini
+#9 CACHED
+
+#10 [base 2/6] RUN apt-get update && apt-get install -y --no-install-recommends libonig-dev libxml2-dev unzip     && for ext in pdo_mysql mbstring dom xml xmlwriter; do          php -r "exit(extension_loaded('$ext') ? 0 : 1);" || docker-php-ext-install -j2 "$ext";        done     && rm -rf /var/lib/apt/lists/*
+#10 CACHED
+
+#11 [base 3/6] COPY --from=composer /usr/bin/composer /usr/local/bin/composer
+#11 CACHED
+
+#12 [base 4/6] COPY docker/apache.conf /etc/apache2/sites-available/000-default.conf
+#12 CACHED
+
+#13 [base 6/6] WORKDIR /var/www/html
+#13 CACHED
+
+#14 [test 1/4] COPY composer.json composer.lock ./
+#14 CACHED
+
+#15 [test 2/4] RUN composer install --no-interaction --prefer-dist --no-progress --no-scripts
+#15 CACHED
+
+#16 [test 3/4] COPY . .
+#16 DONE 0.1s
+
+#17 [test 4/4] RUN composer dump-autoload --classmap-authoritative --no-scripts
+#17 0.366 Generating optimized autoload files (authoritative)
+#17 1.050 Generated optimized autoload files (authoritative) containing 1618 classes
+#17 DONE 1.1s
+
+#18 exporting to image
+#18 exporting layers
+#18 exporting layers 0.2s done
+#18 exporting manifest sha256:2f6ec2e92ebbc500063e430dfff64b680ddf3f436e15c6e02f8bb0c9ba8b0d78 0.0s done
+#18 exporting config sha256:dbc7cd7b0ccc92b7846bb5e425a6c014266dca6f01e9eb7cd0c55c3657d8b00b 0.0s done
+#18 exporting attestation manifest sha256:ba198ea609ddeda2ce01f674d0d6766e15898575a3e281a16119c41c6fdca6a6 0.0s done
+#18 exporting manifest list sha256:0ecaefae446716d404c68f44545ccd33c6477891667ec1dd4d0bf83e849f8f10 0.0s done
+#18 naming to docker.io/library/inventory-reservations-tests:latest done
+#18 unpacking to docker.io/library/inventory-reservations-tests:latest
+#18 unpacking to docker.io/library/inventory-reservations-tests:latest 0.1s done
+#18 DONE 0.4s
+
+#19 resolving provenance for metadata file
+#19 DONE 0.0s
+ Image inventory-reservations-tests Built 
+ Container inventory-reservations-test-app-1 Running 
+ Container inventory-reservations-test-db-1 Running 
+ Container inventory-reservations-test-db-1 Waiting 
+ Container inventory-reservations-test-db-1 Healthy 
+ Container inventory-reservations-test-app-1 Waiting 
+ Container inventory-reservations-test-app-1 Healthy 
+ Container inventory-reservations-tests-run-56c4c90619a8 Creating 
+ Container inventory-reservations-tests-run-56c4c90619a8 Created 
+PHPUnit 12.5.35 by Sebastian Bergmann and contributors.
+
+Runtime:       PHP 8.3.33
+Configuration: /var/www/html/phpunit.xml
+
+......................................                            38 / 38 (100%)
+
+Time: 00:03.356, Memory: 16.00 MB
+
+Api (Tests\Unit\Api)
+ ✔ Invalid requests never call the reservation service
+ ✔ Creation and replay have the same body and distinct status
+ ✔ Business error is mapped to a stable http error
+
+Error Response (Tests\Unit\ErrorResponse)
+ ✔ Classifies errors without leaking sensitive details
+
+Reservation (Tests\Integration\Reservation)
+ ✔ Successful reservation
+ ✔ Insufficient stock leaves no reservation or decrement
+ ✔ Replay returns original body even after stock changes
+ ✔ Same key with different payload is a conflict
+ ✔ Product must exist
+ ✔ Insert failure rolls back the stock decrement
+ ✔ Database rejects negative stock and nonpositive quantity
+ ✔ Lock timeout is bounded and leaves the connection usable
+ ✔ Foreign key and unique key are enforced by mysql
+ ✔ Concurrent different requests cannot oversell
+ ✔ Concurrent identical requests discount only once
+ ✔ Concurrent same key for different products has only one winner
+ ✔ Duplicate 1062 recovery rolls back before reading the winner
+ ✔ Real deadlock 1213 retries the whole transaction successfully
+
+Reservation Request (Tests\Unit\ReservationRequest)
+ ✔ Accepts valid request without normalizing its key
+ ✔ Rejects invalid inputs with data set "malformed JSON"
+ ✔ Rejects invalid inputs with data set "array"
+ ✔ Rejects invalid inputs with data set "missing fields"
+ ✔ Rejects invalid inputs with data set "quantity-0"
+ ✔ Rejects invalid inputs with data set "quantity-1"
+ ✔ Rejects invalid inputs with data set "quantity-2"
+ ✔ Rejects invalid inputs with data set "quantity-3"
+ ✔ Rejects invalid inputs with data set "quantity-4"
+ ✔ Rejects invalid inputs with data set "quantity-5"
+ ✔ Rejects invalid inputs with data set "quantity-6"
+ ✔ Rejects invalid inputs with data set "key-0"
+ ✔ Rejects invalid inputs with data set "key-1"
+ ✔ Rejects invalid inputs with data set "key-2"
+ ✔ Rejects invalid inputs with data set "key-3"
+ ✔ Rejects invalid inputs with data set "key-4"
+ ✔ Rejects invalid inputs with data set "key-5"
+ ✔ Rejects invalid inputs with data set "key-6"
+ ✔ Rejects invalid inputs with data set "invalid product"
+ ✔ Rejects invalid inputs with data set "unknown field"
+
+OK (38 tests, 154 assertions)
+ Container inventory-reservations-test-app-1 Stopping 
+ Container inventory-reservations-test-app-1 Stopped 
+ Container inventory-reservations-test-db-1 Stopping 
+ Container inventory-reservations-test-db-1 Stopped 

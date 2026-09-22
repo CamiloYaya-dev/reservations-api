@@ -1,0 +1,97 @@
+name: inventory-reservations
+services:
+  db:
+    image: mysql:8.4
+    environment:
+      MYSQL_DATABASE: inventory
+      MYSQL_USER: reservation_app
+      MYSQL_PASSWORD: ${DB_PASSWORD:?Ejecute primero bin/setup.ps1}
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD:?Ejecute primero bin/setup.ps1}
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./database/001_schema.sql:/docker-entrypoint-initdb.d/10-schema.sql:ro
+      - ./docker/20-permissions.sh:/docker-entrypoint-initdb.d/20-permissions.sh:ro
+    healthcheck:
+      test: ["CMD-SHELL", "MYSQL_PWD=$$MYSQL_PASSWORD mysql --protocol=TCP -h127.0.0.1 -u$$MYSQL_USER -Dinventory -e 'SELECT 1 FROM reservations LIMIT 0' >/dev/null 2>&1"]
+      interval: 3s
+      timeout: 3s
+      retries: 40
+      start_period: 20s
+  app:
+    build:
+      context: .
+      target: app
+    environment:
+      DB_HOST: db
+      DB_NAME: inventory
+      DB_USER: reservation_app
+      DB_PASSWORD: ${DB_PASSWORD:?Ejecute primero bin/setup.ps1}
+    ports:
+      - "127.0.0.1:${APP_PORT:-8080}:80"
+    depends_on:
+      db:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "php", "-r", "exit(@file_get_contents('http://127.0.0.1/health') === false ? 1 : 0);"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 5s
+  test-db:
+    profiles: ["test"]
+    image: mysql:8.4
+    command: ["--log-bin-trust-function-creators=1"]
+    environment:
+      MYSQL_DATABASE: inventory_test
+      MYSQL_USER: reservation_test
+      MYSQL_PASSWORD: ${DB_PASSWORD:?Ejecute primero bin/setup.ps1}
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD:?Ejecute primero bin/setup.ps1}
+    tmpfs:
+      - /var/lib/mysql
+    volumes:
+      - ./database/001_schema.sql:/docker-entrypoint-initdb.d/10-schema.sql:ro
+      - ./docker/20-test-permissions.sh:/docker-entrypoint-initdb.d/20-permissions.sh:ro
+    healthcheck:
+      test: ["CMD-SHELL", "MYSQL_PWD=$$MYSQL_PASSWORD mysql --protocol=TCP -h127.0.0.1 -u$$MYSQL_USER -Dinventory_test -e 'SELECT 1 FROM reservations LIMIT 0' >/dev/null 2>&1"]
+      interval: 3s
+      timeout: 3s
+      retries: 40
+      start_period: 20s
+  test-app:
+    profiles: ["test"]
+    build:
+      context: .
+      target: app
+    environment:
+      DB_HOST: test-db
+      DB_NAME: inventory_test
+      DB_USER: reservation_test
+      DB_PASSWORD: ${DB_PASSWORD:?Ejecute primero bin/setup.ps1}
+    depends_on:
+      test-db:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "php", "-r", "exit(@file_get_contents('http://127.0.0.1/health') === false ? 1 : 0);"]
+      interval: 3s
+      timeout: 3s
+      retries: 20
+  tests:
+    profiles: ["test"]
+    build:
+      context: .
+      target: test
+    environment:
+      APP_ENV: test
+      DB_HOST: test-db
+      DB_NAME: inventory_test
+      DB_USER: reservation_test
+      DB_PASSWORD: ${DB_PASSWORD:?Ejecute primero bin/setup.ps1}
+      TEST_BASE_URL: http://test-app
+    volumes:
+      - ./reports:/var/www/html/reports
+    depends_on:
+      test-app:
+        condition: service_healthy
+    command: ["vendor/bin/phpunit", "--testdox", "--log-junit", "reports/junit.xml"]
+volumes:
+  mysql_data:

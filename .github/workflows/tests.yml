@@ -1,0 +1,33 @@
+name: Tests
+on: [push, pull_request]
+permissions:
+  contents: read
+jobs:
+  php-mysql:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - name: Generate isolated local credentials
+        run: |
+          umask 077
+          echo "DB_PASSWORD=$(openssl rand -hex 32)" > .env
+          echo "DB_ROOT_PASSWORD=$(openssl rand -hex 32)" >> .env
+      - name: Start test HTTP server and MySQL
+        run: docker compose --profile test up -d --build --wait test-app
+      - name: Build tests
+        run: docker compose --profile test build tests
+      - name: PHPUnit unit, integration and real concurrent HTTP requests
+        run: docker compose --profile test run --rm -T tests
+      - name: Logs on failure
+        if: failure()
+        run: docker compose --profile test logs --tail=100 test-app test-db
+      - name: Upload JUnit
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: phpunit-results
+          path: reports/junit.xml
+      - name: Stop disposable CI environment
+        if: always()
+        run: docker compose --profile test down -v

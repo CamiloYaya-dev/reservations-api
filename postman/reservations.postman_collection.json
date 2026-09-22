@@ -1,0 +1,176 @@
+{
+  "info": {
+    "name": "Inventario - Reservas PHP MySQL",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": "Crear antes un producto por CLI y actualizar product_id. No crea productos ni reinicia datos. Repetir Reservar sin cambiar request_id demuestra replay."
+  },
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:8080"
+    },
+    {
+      "key": "product_id",
+      "value": "1"
+    },
+    {
+      "key": "request_id",
+      "value": "REQ-2026-0001"
+    }
+  ],
+  "item": [
+    {
+      "name": "Health",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{base_url}}/health"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Health 200\", () => pm.response.to.have.status(200));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Reservar",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{base_url}}/reservations",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"request_id\": \"{{request_id}}\",\n  \"product_id\": {{product_id}},\n  \"quantity\": 3\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Creacion o replay\", () => pm.expect(pm.response.code).to.be.oneOf([200, 201]));",
+              "pm.test(\"Reserva confirmada\", () => pm.expect(pm.response.json().status).to.eql(\"confirmed\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Conflicto de idempotencia",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{base_url}}/reservations",
+        "body": {
+          "mode": "raw",
+          "raw": "{\"request_id\":\"{{request_id}}\",\"product_id\":{{product_id}},\"quantity\":4}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Conflicto\", () => pm.response.to.have.status(409));",
+              "pm.test(\"Clave reutilizada\", () => pm.expect(pm.response.json().error.code).to.eql(\"idempotency_conflict\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Stock insuficiente",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{base_url}}/reservations",
+        "body": {
+          "mode": "raw",
+          "raw": "{\"request_id\":\"INSUFFICIENT-{{$guid}}\",\"product_id\":{{product_id}},\"quantity\":2147483647}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Stock insuficiente\", () => pm.expect(pm.response.json().error.code).to.eql(\"insufficient_stock\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Cantidad invalida",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{base_url}}/reservations",
+        "body": {
+          "mode": "raw",
+          "raw": "{\"request_id\":\"INVALID-{{$guid}}\",\"product_id\":{{product_id}},\"quantity\":0}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Validacion 422\", () => pm.response.to.have.status(422));"
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}
